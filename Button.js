@@ -4,8 +4,8 @@ class Button {
     this.rectY = yb;
     this.rectXSize = xSize;
     this.rectYSize = ySize;
-		this.rectOver = false;
-  	this.pressed = false;
+    this.rectOver = false;
+    this.pressed = false;
   }
   
   update() {
@@ -26,7 +26,7 @@ class Button {
     }
   }
   
-	display() {
+  display() {
     noStroke();
     if (this.rectOver) {
       fill(0, 0, 0);
