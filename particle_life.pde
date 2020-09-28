@@ -351,38 +351,6 @@ void RandomizeParticles() {
   }
 }
 
-/*
-void keyPressed() {
-  if (keyCode == 67) { //c
-    circles = !circles;
-  }
-  else if (keyCode == 86) { //v
-    velocityLines = !velocityLines;
-  }
-  else if (keyCode == 70) { //f
-    forceLines = !forceLines;
-  }
-  else if (keyCode == 78) { //n
-    sideWrap = !sideWrap;
-  }
-}
-*/
-
-/*
-void mouseWheel(MouseEvent event) {
-  float newWheel = event.getCount();
-  if (mouseWheel > newWheel) {
-    timeStep += 0.1f;
-  }
-  else if (mouseWheel < newWheel) {
-    if (timeStep >= 0) {
-      timeStep -= 0.1f;
-    }
-  }
-  //usingWheel = true;
-}
-*/
-
 void mousePressed() {
   mouseHeld = true;
 }
