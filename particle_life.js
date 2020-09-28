@@ -6,8 +6,8 @@ class Particle {
     this.m = mass;
     this.v = velocity;
 		
-		//For testing only
-		this.a = 0;
+    //For testing only
+    this.a = 0;
   }
 }
 
@@ -63,13 +63,13 @@ var c2;
 function setup() {
   createCanvas(650, 400);
 	
-	hs1 = new HScrollbar(400, 100, 200, 10, 3);
+  hs1 = new HScrollbar(400, 100, 200, 10, 3);
   hs2 = new HScrollbar(400, 150, 200, 10, 3);
   hs3 = new HScrollbar(400, 250, 200, 10, 3);
   b1 = new Button(400, 350, 75, 25);
   b2 = new Button(525, 350, 75, 25);
   c1 = new Checkbox(475, 300, 20, 20);   
-	c2 = new Checkbox(580, 300, 20, 20);
+  c2 = new Checkbox(580, 300, 20, 20);
 	
   centerX = 200;
   centerY = height / 2;
@@ -85,7 +85,7 @@ function draw() {
   background(200, 200, 200);
   fill(0, 0, 0);
   textSize(20);
-	noStroke();
+  noStroke();
   text("Options", 400, 60);
   
   textSize(15);
@@ -282,7 +282,7 @@ function draw() {
     
     p.position = createVector(newX, newY);
     
-		noStroke();
+    noStroke();
     if (p.pType == 0) {
       fill(255, 0, 0);
     }
@@ -297,9 +297,9 @@ function draw() {
     }
     circle(pX, pY, particleRadius * 2);
 		
-		strokeWeight(1);
+    strokeWeight(1);
     if (circles) {
-			stroke(75);
+      stroke(75);
       noFill();
       circle(pX, pY, sightDist);
     }
