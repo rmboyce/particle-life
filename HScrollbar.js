@@ -12,8 +12,8 @@ class HScrollbar {
     this.sposMax = this.xpos + this.swidth - this.sheight;
     this.loose = l;
     this.normalPos = (this.spos - this.sposMin) / (this.sposMax - this.sposMin);
-		this.over = false;
-		this.locked = false;
+    this.over = false;
+    this.locked = false;
   }
 
   update() {
