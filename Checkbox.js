@@ -4,8 +4,8 @@ class Checkbox {
     this.rectY = yb;
     this.rectXSize = xSize;
     this.rectYSize = ySize;
-		this.rectOver = false;
-		this.pressed = false;
+    this.rectOver = false;
+    this.pressed = false;
   }
   
   update() {
@@ -37,7 +37,7 @@ class Checkbox {
       stroke(0);
       line(this.rectX, this.rectY, this.rectX + this.rectXSize, this.rectY + this.rectYSize);
       line(this.rectX + this.rectXSize, this.rectY, this.rectX, this.rectY + this.rectYSize);
-			noStroke();
+      noStroke();
     }
   }
   
