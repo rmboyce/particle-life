@@ -52,6 +52,9 @@ var percentRed = 0;
 var percentGreen = 40;
 var percentBlue = 100 - percentRed - percentGreen;
 
+const INTERFACE_X = 375;
+const MOUSE_CIRCLE_RADIUS = 100;
+
 var hs1;
 var hs2;
 var hs3;
@@ -81,6 +84,44 @@ function setup() {
   hs2.setNormalPos(percentGreen / 100);
 }
 
+//hs: HScrollbar, s: text above, per: percentage text below
+function TextHScrollbar(hs, s, per) {
+  textSize(15);
+  text(s, hs.xpos, hs.ypos - 5);
+  hs.update();
+  hs.display();
+  fill(0, 0, 0);
+  text(per, hs.xpos, hs.ypos + 25);
+}
+
+function DrawPartDist(xPos, yPos, barWidth, barHeight, title, subtitle, perRed, perGreen, perBlue) {
+  text(title, xPos, yPos - 10);
+  let tempRedLength = barWidth * perRed / 100;
+  let tempGreenLength = barWidth * perGreen / 100;
+  fill(255, 0, 0);
+  rect(xPos, yPos - 5, tempRedLength, barHeight);
+  fill(0, 255, 0);
+  rect(xPos + tempRedLength, yPos - 5, tempGreenLength, barHeight);
+  fill(0, 0, 255);
+  rect(xPos + tempRedLength + tempGreenLength, yPos - 5, barWidth * perBlue / 100, barHeight);
+  fill(0, 0, 0);
+  text(subtitle, xPos, yPos + 20);
+}
+
+function TextButton(b, s) {
+  b.update();
+  b.display();
+  fill(255, 255, 255);
+  text(s, b.rectX + 12, b.rectY + 17);
+}
+
+function TextCheckbox(c, s, xOffset) {
+  fill(0, 0, 0);
+  text(s, c.rectX - xOffset, c.rectY + 15);
+  c.update();
+  c.display();
+}
+
 function draw() {
   background(200, 200, 200);
   fill(0, 0, 0);
@@ -88,63 +129,26 @@ function draw() {
   noStroke();
   text("Options", 400, 60);
   
-  textSize(15);
-  text("Percent Red", 400, 87.5);
-  hs1.update();
-  hs1.display();
   percentRed = (int) (hs1.normalPos * 100 + 0.5);
-  fill(0, 0, 0);
-  text(percentRed, 400, 117.5);
+  TextHScrollbar(hs1, "Percent Red", percentRed);
   
-  text("Percent Green", 400, 137.5);
-  hs2.update();
-  hs2.display();
   if (hs2.normalPos > 1 - hs1.normalPos) {
     hs2.setPos(hs2.sposMin + (1 - hs1.normalPos) * (hs2.sposMax - hs2.sposMin));
   }
   percentGreen = (int) (hs2.normalPos * 100 + 0.5);
+  TextHScrollbar(hs2, "Percent Green", percentGreen);
+  
   percentBlue = 100 - percentRed - percentGreen;
-  fill(0, 0, 0);
-  text(percentGreen, 400, 167.5);
+  DrawPartDist(400, 200, 200, 10, "Particle Percentages", "Percent Blue: " + percentBlue, percentRed, percentGreen, percentBlue);
   
-  text("Particle Percentages", 400, 187.5);
-  let tempRedLength = 200 * percentRed / 100;
-  let tempGreenLength = 200 * percentGreen / 100;
-  fill(255, 0, 0);
-  rect(400, 195, tempRedLength, 10);
-  fill(0, 255, 0);
-  rect(400 + tempRedLength, 195, tempGreenLength, 10);
-  fill(0, 0, 255);
-  rect(400 + tempRedLength + tempGreenLength, 195, 200 * percentBlue / 100, 10);
-  fill(0, 0, 0);
-  text("Percent Blue: " + percentBlue, 400, 217.5);
+  timeStep = round(hs3.normalPos, 3);
+  TextHScrollbar(hs3, "Timestep", timeStep);
   
-  text("Timestep", 400, 237.5);
-  hs3.update();
-  hs3.display();
-  timeStep = hs3.normalPos;
-  fill(0, 0, 0);
-  text(round(hs3.normalPos, 3), 400, 267.5);
+  TextButton(b1, "Restart");
+  TextButton(b2, "Random");
   
-  b1.update();
-  b1.display();
-  fill(255, 255, 255);
-  text("Restart", 412, 367);
-  
-  b2.update();
-  b2.display();
-  fill(255, 255, 255);
-  text("Random", 533, 367);
-  
-  fill(0, 0, 0);
-  text("Sight Dist.", 400, 315);
-  c1.update();
-  c1.display();
-  
-  fill(0, 0, 0);
-  text("Velocity", 520, 315);
-  c2.update();
-  c2.display();
+  TextCheckbox(c1, "Sight Dist.", 75);
+  TextCheckbox(c2, "Velocity", 58);
   
   stroke(0, 0, 0);
   fill(0, 0, 0);
@@ -173,7 +177,7 @@ function draw() {
       let dY = mouseY - pos.y;
       let dist = pow(pow(dX, 2) + pow(dY, 2), 0.5);
       let distFunction = pow(2, 4 - abs(dist/10));
-      if (dist < 200) {
+      if (dist < MOUSE_CIRCLE_RADIUS) {
         dX /= dist;
         dY /= dist;
         p.v = createVector(p.v.x + -GetSign(dX) * distFunction, p.v.y + -GetSign(dY) * distFunction);
@@ -181,8 +185,8 @@ function draw() {
     }
     noFill();
     strokeWeight(1);
-    if (mouseX < 375) {
-      circle(mouseX, mouseY, 100);
+    if (mouseX < INTERFACE_X) {
+      circle(mouseX, mouseY, MOUSE_CIRCLE_RADIUS);
     }
   }
   
@@ -331,7 +335,7 @@ function RandomizeParticles() {
     else {
       rand = 2;
     }
-    particleList[i] = new Particle(rand, createVector(random(0, 800), random(0, 800)), 10, createVector(0, 0));
+    particleList[i] = new Particle(rand, createVector(random(0, centerX + circleRadius), random(0, height)), 10, createVector(0, 0));
   }
 }
 

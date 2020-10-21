@@ -58,6 +58,9 @@ int percentRed = 0;
 int percentGreen = 40;
 int percentBlue = 100 - percentRed - percentGreen;
 
+final int INTERFACE_X = 750;
+final int MOUSE_CIRCLE_RADIUS = 200;
+
 HScrollbar hs1 = new HScrollbar(800, 200, 400, 20, 3);
 HScrollbar hs2 = new HScrollbar(800, 300, 400, 20, 3);
 HScrollbar hs3 = new HScrollbar(800, 500, 400, 20, 3);
@@ -78,6 +81,50 @@ void setup() {
   hs2.setNormalPos((float) percentGreen / 100f);
 }
 
+//hs: HScrollbar, s: text above, per: percentage text below
+void TextHScrollbar(HScrollbar hs, String s, float per, boolean isPerInt) {
+  textSize(20);
+  text(s, hs.xpos, hs.ypos - 15);
+  hs.update();
+  hs.display();
+  fill(0, 0, 0);
+  if (isPerInt) {
+    text((int)per, hs.xpos, hs.ypos + 45);
+  }
+  else {
+    text(per, hs.xpos, hs.ypos + 45);
+  }
+}
+
+void DrawPartDist(int xPos, int yPos, int barWidth, int barHeight, String title, 
+                  String subtitle, int perRed, int perGreen, int perBlue) {
+  text(title, xPos, yPos - 25);
+  int tempRedLength = barWidth * perRed / 100;
+  int tempGreenLength = barWidth * perGreen / 100;
+  fill(255, 0, 0);
+  rect(xPos, yPos - 10, tempRedLength, barHeight);
+  fill(0, 255, 0);
+  rect(xPos + tempRedLength, yPos - 10, tempGreenLength, barHeight);
+  fill(0, 0, 255);
+  rect(xPos + tempRedLength + tempGreenLength, yPos - 10, barWidth * perBlue / 100, barHeight);
+  fill(0, 0, 0);
+  text(subtitle, xPos, yPos + 35);
+}
+
+void TextButton(Button b, String s) {
+  b.update();
+  b.display();
+  fill(255, 255, 255);
+  text(s, b.rectX + 37, b.rectY + 30);
+}
+
+void TextCheckbox(Checkbox c, String s, int xOffset) {
+  fill(0, 0, 0);
+  text(s, c.rectX - xOffset, c.rectY + 25);
+  c.update();
+  c.display();
+}
+
 void draw() {
   background(200, 200, 200);
   fill(0, 0, 0);
@@ -85,63 +132,27 @@ void draw() {
   textSize(40);
   text("Options", 800, 120);
   
-  textSize(20);
-  text("Percent Red", 800, 175);
-  hs1.update();
-  hs1.display();
   percentRed = (int) (hs1.normalPos * 100 + 0.5);
-  fill(0, 0, 0);
-  text(percentRed, 800, 235);
+  TextHScrollbar(hs1, "Percent Red", percentRed, true);
   
-  text("Percent Green", 800, 275);
-  hs2.update();
-  hs2.display();
   if (hs2.normalPos > 1f - hs1.normalPos) {
     hs2.setPos(hs2.sposMin + (1f - hs1.normalPos) * (hs2.sposMax - hs2.sposMin));
   }
   percentGreen = (int) (hs2.normalPos * 100 + 0.5);
+  TextHScrollbar(hs2, "Percent Green", percentGreen, true);
+  
   percentBlue = 100 - percentRed - percentGreen;
-  fill(0, 0, 0);
-  text(percentGreen, 800, 335);
+  DrawPartDist(800, 400, 400, 20, "Particle Percentages", 
+              "Percent Blue: " + percentBlue, percentRed, percentGreen, percentBlue);
   
-  text("Particle Percentages", 800, 375);
-  float tempRedLength = 400 * (float) percentRed / 100f;
-  float tempGreenLength = 400 * (float) percentGreen / 100f;
-  fill(255, 0, 0);
-  rect(800, 390, tempRedLength, 20);
-  fill(0, 255, 0);
-  rect(800 + tempRedLength, 390, tempGreenLength, 20);
-  fill(0, 0, 255);
-  rect(800 + tempRedLength + tempGreenLength, 390, 400 * (float) percentBlue / 100f, 20);
-  fill(0, 0, 0);
-  text("Percent Blue: " + percentBlue, 800, 435);
-  
-  text("Timestep", 800, 475);
-  hs3.update();
-  hs3.display();
   timeStep = hs3.normalPos;
-  fill(0, 0, 0);
-  text(hs3.normalPos, 800, 535);
+  TextHScrollbar(hs3, "Timestep", timeStep, false);
   
-  b1.update();
-  b1.display();
-  fill(255, 255, 255);
-  text("Restart", 840, 730);
+  TextButton(b1, "Restart");
+  TextButton(b2, "Random");
   
-  b2.update();
-  b2.display();
-  fill(255, 255, 255);
-  text("Random", 1085, 730);
-  
-  fill(0, 0, 0);
-  text("Sight Distance", 800, 625);
-  c1.update();
-  c1.display();
-  
-  fill(0, 0, 0);
-  text("Velocity Lines", 1015, 625);
-  c2.update();
-  c2.display();
+  TextCheckbox(c1, "Sight Distance", 150);
+  TextCheckbox(c2, "Velocity Lines", 145);
   
   stroke(0, 0, 0);
   fill(0, 0, 0);
@@ -170,7 +181,7 @@ void draw() {
       float dY = mouseY - pos.y;
       float dist = pow(pow(dX, 2) + pow(dY, 2), 0.5f);
       float distFunction = pow(2, 4f - abs(dist/10f));
-      if (dist < 200) {
+      if (dist < MOUSE_CIRCLE_RADIUS) {
         dX /= dist;
         dY /= dist;
         p.v = new PVector(p.v.x + -GetSign(dX) * distFunction, p.v.y + -GetSign(dY) * distFunction);
@@ -178,8 +189,8 @@ void draw() {
     }
     noFill();
     strokeWeight(1);
-    if (mouseX < 750) {
-      circle(mouseX, mouseY, 200);
+    if (mouseX < INTERFACE_X) {
+      circle(mouseX, mouseY, MOUSE_CIRCLE_RADIUS);
     }
   }
   
